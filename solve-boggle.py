@@ -53,8 +53,7 @@ def step_along_pathway(i, j, keyword, index, keyword_index):
 		# 		   our step was E - G: (2 5) - (1 4) = (1 1), we go bottom-right
 		#
 		#		   we step along the way for GE-RMANY, that is length of GERMANY - 2
-		#		   and it's implicit in range(2, len(keyword) + 1): 8 - 2, 6
-		#		   don't forget the +1 inclusive range, so 6 - 1, it's 5
+		#		   and it's implicit in range(2, len(keyword) + 1): 7 - 2, 5
 		#
 		#		   now, to start stepping, we do step*pointer + initial index
 		#		   because to get to 'R' in (3 6), we must increment initial index (1 4)
@@ -78,14 +77,14 @@ def find_word_in_grid(keyword, index, board):
 	
 	for i in range(grid_start[0], grid_end[0] + 1):  # +1 inclusive
 		for j in range(grid_start[1], grid_end[1] + 1):  # +1 inclusive
-			# skip index (exlucing current index)
+			# skip index (excluding current index)
 			if i == index[0] and j == index[1]:
 				continue
 			
 			# we may get more than 1 valid 2nd word. so, for each grid we try
 			# we must reset the keyword_index lists (because the previous one
 			# might be wrong; this is why the keyword_index is declared here
-			# and not before the grid)
+			# and not before looping the grid)
 			keyword_index = [index]
 
 			if board[i][j] == keyword[1]:  # try to match with the 2nd word
@@ -100,7 +99,7 @@ def solve(board, keywords):
 																	n^3 for searching array of keyword
 																	(do search everytime for each keyword)
 
-	idea 1: hashmap + trie traversal from first letter				O(construct: n^2, traverse: nlogn)
+	idea 1: hashmap + DFS from first letter							O(construct: n^2, traverse: nlogn)
 	idea 2: hashmap + check first letter and last letter alignment	O(construct: n^2: matching: n)
 																	(at most n^2 bcs HASHMAP CONSTRUCTION)
 	"""
