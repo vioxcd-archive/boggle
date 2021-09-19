@@ -53,6 +53,8 @@ def solve(board, keywords):
 		
 		# constant index search
 		for index in first_letter_indexes:
+			if index == (11, 12):
+				pass
 			# depth first search
 			# on a 3x3 grid, excluding current index (8), start from top-left, end in bottom-right
 			# beware of bounds error, use max against 0; min against length of board
@@ -62,7 +64,7 @@ def solve(board, keywords):
 			for i in range(grid_start[0], grid_end[0] + 1):  # +1 inclusive
 				for j in range(grid_start[1], grid_end[1] + 1):  # +1 inclusive
 					# skip index (exlucing current index)
-					if i == index[0] and j == index[0]:
+					if i == index[0] and j == index[1]:
 						continue
 
 					keyword_index = [index]  # index lists
