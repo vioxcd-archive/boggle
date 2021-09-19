@@ -61,8 +61,6 @@ def solve(board, keywords):
 		
 		# constant index search
 		for index in first_letter_indexes:
-			if index == (11, 12):
-				pass
 			# depth first search
 			# on a 3x3 grid, excluding current index (8), start from top-left, end in bottom-right
 			# beware of bounds error, use max against 0; min against length of board
