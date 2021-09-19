@@ -23,6 +23,24 @@ board = [
 	['A', 'O', 'J', 'O', 'A', 'E', 'G', 'T', 'X', 'M', 'C', 'Z', 'P', 'C', 'I', 'O', 'U'],
 ]
 
+def construct_lookup_table(board):
+	lookup_table = {}
+
+	# n^2 construction
+	for row_index, row in enumerate(board):
+		for col_index, col in enumerate(row):
+			index = row_index, col_index
+
+			try:
+				lookup_table[col].append(index)
+			except:
+				lookup_table[col] = [index]
+
+	return lookup_table
+
+def find_word_in_grid():
+	pass
+
 def solve(board, keywords):
 	"""
 	idea 0: traverse the board + trie traversal 					O(search: n^2, traverse: nlogn)
@@ -33,23 +51,13 @@ def solve(board, keywords):
 	idea 2: hashmap + check first letter and last letter alignment	O(construct: n^2: matching: n)
 																	(at most n^2 bcs HASHMAP CONSTRUCTION)
 	"""
-	letters_index = {}  # lookup table for indexes. letter: [(row, col)]
-	keywords_index = []  # result. [list(row, col)]
-
-	# n^2 construction
-	for row_index, row in enumerate(board):
-		for col_index, col in enumerate(row):
-			index = row_index, col_index
-
-			try:
-				letters_index[col].append(index)
-			except:
-				letters_index[col] = [index]
+	letters_index_lookup = construct_lookup_table(board)  # lookup table for indexes. letter: [(row, col)]
+	result = []
 
 	# n search
 	for keyword in keywords:
 		FOUND = False
-		first_letter_indexes = letters_index[keyword[0]]  # all possible index
+		first_letter_indexes = letters_index_lookup[keyword[0]]  # all possible index
 		
 		# constant index search
 		for index in first_letter_indexes:
@@ -100,7 +108,7 @@ def solve(board, keywords):
 					
 					if len(keyword_index) == len(keyword):
 						FOUND = True
-						keywords_index.append(keyword_index)
+						result.append(keyword_index)
 						break  # break from col grid
 				
 				if FOUND:
@@ -109,9 +117,36 @@ def solve(board, keywords):
 			if FOUND:
 				break  # break from index search. LMAO LOOK AT THIS. FUCK ME:)
 		
-	return keywords_index
+	return result
+
+def check_answer(answer):
+	correct = [
+		[(2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0), (9, 0), (10, 0), (11, 0), (12, 0), (13, 0), (14, 0)],
+		[(10, 10), (9, 9), (8, 8), (7, 7), (6, 6), (5, 5), (4, 4), (3, 3), (2, 2)],
+		[(1, 4), (2, 5), (3, 6), (4, 7), (5, 8), (6, 9), (7, 10)],
+		[(9, 5), (8, 6), (7, 7), (6, 8), (5, 9), (4, 10), (3, 11), (2, 12), (1, 13)],
+		[(10, 0), (10, 1), (10, 2), (10, 3), (10, 4), (10, 5), (10, 6), (10, 7), (10, 8), (10, 9), (10, 10)],
+		[(11, 12), (11, 11), (11, 10), (11, 9), (11, 8), (11, 7), (11, 6), (11, 5)],
+		[(15, 4), (14, 4), (13, 4), (12, 4), (11, 4), (10, 4), (9, 4), (8, 4), (7, 4)],
+		[(8, 12), (9, 11), (10, 10), (11, 9), (12, 8), (13, 7), (14, 6), (15, 5), (16, 4)],
+	]
+	
+	if len(answer) != len(correct):
+		print('Wrong Answer')
+		return
+	
+	for a, c in zip(answer, correct):
+		for e1, e2 in zip(a, c):
+			if e1 != e2:
+				print('Wrong Answer')
+				return
+
+	print("Correct!")
 
 answer = solve(board, keywords)
-for keyword, index in zip(keywords, answer):
-	print(keyword, index)
 
+# this would print the result
+# for keyword, index in zip(keywords, answer):
+	# print(keyword, index)
+
+check_answer(answer)
