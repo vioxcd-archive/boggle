@@ -38,6 +38,37 @@ def construct_lookup_table(board):
 
 	return lookup_table
 
+def step_along_pathway(i, j, keyword, index, keyword_index):
+	# now, follow the pathway!! step through the keyword while matching along the way
+	step = i - index[0], j - index[1]  # explanation of step below (in example)
+
+	# add found 2nd word to found list
+	keyword_index.append((i, j))
+
+	# len(keyword) matching
+	# start matching from the 3rd letter (index 2), until the end
+	for pointer in range(2, len(keyword)):
+		# step * pointer: step is the increment of pointer
+		# example: for the word 'GERMANY' we find G in (1 4), and match E in (2 5)
+		# 		   our step was E - G: (2 5) - (1 4) = (1 1), we go bottom-right
+		#
+		#		   we step along the way for GE-RMANY, that is length of GERMANY - 2
+		#		   and it's implicit in range(2, len(keyword) + 1): 8 - 2, 6
+		#		   don't forget the +1 inclusive range, so 6 - 1, it's 5
+		#
+		#		   now, to start stepping, we do step*pointer + initial index
+		#		   because to get to 'R' in (3 6), we must increment initial index (1 4)
+		#		   by R - G: (3 6) - (1 4) = (2 2) and we got (2 2) from step * pointer
+		#		   (our step was (1 1) and our pointer start from 2)
+		next_step = step[0]*pointer + index[0], step[1]*pointer + index[1]
+
+		# stop searching if the letter doesn't match
+		if board[next_step[0]][next_step[1]] == keyword[pointer]:
+			keyword_index.append(next_step)
+		else:
+			return
+
+
 def find_word_in_grid(keyword, index, board):
 	# depth first search
 	# on a 3x3 grid, excluding current index (8), start from top-left, end in bottom-right
@@ -58,34 +89,7 @@ def find_word_in_grid(keyword, index, board):
 			keyword_index = [index]
 
 			if board[i][j] == keyword[1]:  # try to match with the 2nd word
-				# now, follow the pathway!! step through the keyword while matching along the way
-				step = i - index[0], j - index[1]  # explanation of step below (in example)
-
-				# add found 2nd word to found list
-				keyword_index.append((i, j))
-
-				# len(keyword) matching
-				# start matching from the 3rd letter (index 2), until the end
-				for pointer in range(2, len(keyword)):
-					# step * pointer: step is the increment of pointer
-					# example: for the word 'GERMANY' we find G in (1 4), and match E in (2 5)
-					# 		   our step was E - G: (2 5) - (1 4) = (1 1), we go bottom-right
-					#
-					#		   we step along the way for GE-RMANY, that is length of GERMANY - 2
-					#		   and it's implicit in range(2, len(keyword) + 1): 8 - 2, 6
-					#		   don't forget the +1 inclusive range, so 6 - 1, it's 5
-					#
-					#		   now, to start stepping, we do step*pointer + initial index
-					#		   because to get to 'R' in (3 6), we must increment initial index (1 4)
-					#		   by R - G: (3 6) - (1 4) = (2 2) and we got (2 2) from step * pointer
-					#		   (our step was (1 1) and our pointer start from 2)
-					next_step = step[0]*pointer + index[0], step[1]*pointer + index[1]
-
-					# stop searching if the letter doesn't match
-					if board[next_step[0]][next_step[1]] == keyword[pointer]:
-						keyword_index.append(next_step)
-					else:
-						break  # break from pathway
+				step_along_pathway(i, j, keyword, index, keyword_index)  # MUTATE KEYWORD_INDEX (SIDE EFFECT)
 
 			if len(keyword_index) == len(keyword):
 				return keyword_index
